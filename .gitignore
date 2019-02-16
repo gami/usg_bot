@@ -3,3 +3,4 @@ tmp
 vendor
 .DS_Store
 .project.envrc
+.jwt.json
