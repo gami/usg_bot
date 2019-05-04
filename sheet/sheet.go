@@ -11,6 +11,7 @@ import (
 	"google.golang.org/api/sheets/v4"
 
 	"usg_bot/config"
+	"usg_bot/entity"
 )
 
 // Sheet represents SpreadSheet as Repository.
@@ -40,17 +41,16 @@ func getClient() *http.Client {
 
 	cfg, err := google.JWTConfigFromJSON(
 		[]byte(data), sheets.SpreadsheetsScope)
+	if err != nil {
+		log.Fatalf("Unable to read secret: %v", err)
+	}
 
 	return cfg.Client(context.Background())
 }
 
-func sheetRange(tab string, from string, to string) string {
-	return fmt.Sprintf("%v!%v:%v", tab, from, to)
-}
-
 // Rows is a function to fetch data in range
-func (s *Sheet) Rows(tab string, from string, to string) ([][]string, error) {
-	resp, err := s.client.Spreadsheets.Values.Get(s.SheetID, sheetRange(tab, from, to)).Do()
+func (s *Sheet) Rows(rng *entity.Range) ([][]string, error) {
+	resp, err := s.client.Spreadsheets.Values.Get(s.SheetID, rng.String()).Do()
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +72,28 @@ func (s *Sheet) Rows(tab string, from string, to string) ([][]string, error) {
 }
 
 // Search is a function to search data where the key exists in row
-func (*Sheet) Search(tab string, key string, row string) []string {
-	return nil
+// key must exist in first row in given range.
+func (s *Sheet) Search(rng *entity.Range, key string, needle string) ([]string, error) {
+	rows, err := s.Rows(rng)
+	if err != nil {
+		return nil, err
+	}
+	keyIdx := -1
+	for i, row := range rows {
+		for k, str := range row {
+			if keyIdx == -1 && str == key {
+				keyIdx = i
+			}
+			if k == i && str == needle {
+				// found
+				return row, nil
+			}
+		}
+	}
+	if keyIdx == -1 {
+
+	}
+	return nil, nil
 }
 
 // Append is a function to add a row to the last row of sheet.

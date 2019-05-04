@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"usg_bot/entity"
 	"usg_bot/sheet"
 )
 
@@ -13,7 +14,8 @@ var (
 
 func Test_Rows(t *testing.T) {
 	s := sheet.NewSheet(sheetID)
-	rs, err := s.Rows("sample", "A1", "D5")
+
+	rs, err := s.Rows(entity.NewRange("sample", "A1", "D5"))
 
 	if err != nil {
 		t.Fatalf("failed to fetch sheets.Row %v", err)
