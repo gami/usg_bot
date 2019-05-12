@@ -97,6 +97,6 @@ func (s *Sheet) Search(rng *entity.Range, key string, needle string) ([]string, 
 }
 
 // Append is a function to add a row to the last row of sheet.
-func (*Sheet) Append(tab string, data []string) [][]string {
+func (*Sheet) Append(tab string, row []string) [][]string {
 	return nil
 }

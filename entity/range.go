@@ -12,6 +12,7 @@ type Range struct {
 	to string
 }
 
+// NewRange is a function to init new Range from tabname and the postion of range.
 func NewRange(tab string, from string, to string) *Range {
 	return &Range{
 		tab:  tab,

@@ -10,3 +10,8 @@ type Result struct {
 	WinScore   int
 	LoseScore  int
 }
+
+// ToRow is a function to make row from *Result
+func (t *Result) ToRow() []string {
+	return nil
+}

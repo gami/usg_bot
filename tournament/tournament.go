@@ -17,10 +17,11 @@ func NewTournament(sheet Sheet) *Tournament {
 }
 
 func (t *Tournament) CheckIn(team *entity.Team) error {
-	t.Sheet.Append("点呼", data)
+	t.Sheet.Append("点呼", team.ToRow())
 	return nil
 }
 
-func (t *Tournament) AddResult(*entity.Result) error {
-	t.Sheet.Append("予選報告", data)
+func (t *Tournament) AddResult(res *entity.Result) error {
+	t.Sheet.Append("予選報告", res.ToRow())
+	return nil
 }
