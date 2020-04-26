@@ -2,6 +2,7 @@ package command
 
 import (
 	"strings"
+	"usg_bot/entity"
 )
 
 var hellos = []string{"マンメンミ", "hello", "Hello", "おはよう"}
@@ -21,6 +22,6 @@ func (c *Hello) Resolve(m string) bool {
 }
 
 // Response is a function to respond comamnd result.
-func (c *Hello) Response(m string) string {
+func (c *Hello) Respond(from *entity.User, msg *entity.Message) string {
 	return "マンメンミ！"
 }

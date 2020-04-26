@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"usg_bot/command"
+	"usg_bot/entity"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -28,6 +29,8 @@ func NewBot(config *config.Config) *Bot {
 	}
 
 	bot.appendCommand(&command.Hello{})
+	bot.appendCommand(&command.Me{})
+
 	return bot
 }
 
@@ -68,12 +71,15 @@ func (b *Bot) onMessage(sess *discordgo.Session, event *discordgo.MessageCreate)
 
 	log.Println(fmt.Sprintf("received channel->%v, msg-> %v", channel.Name, event.Content))
 
+	category, err := sess.State.Channel(channel.ParentID)
+	log.Println(fmt.Sprintf("received category? ->%v", category))
 	for _, command := range b.commands {
 		if event.Author.Bot {
 			continue
 		}
 		if command.Resolve(event.Content) {
-			sendMessage(sess, channel, command.Response(event.Content))
+
+			sendMessage(sess, channel, command.Respond(authorToUser(event.Author), makeMessage(event.Content)))
 		}
 	}
 }
@@ -84,5 +90,20 @@ func sendMessage(sess *discordgo.Session, channel *discordgo.Channel, msg string
 	log.Println(">>> " + msg)
 	if err != nil {
 		log.Println("Error sending message: ", err)
+	}
+}
+
+func authorToUser(a *discordgo.User) *entity.User {
+	return &entity.User{
+		ID:            a.ID,
+		Username:      a.Username,
+		Discriminator: a.Discriminator,
+		Token:         a.Token,
+	}
+}
+
+func makeMessage(msg string) *entity.Message {
+	return &entity.Message{
+		Content: msg,
 	}
 }

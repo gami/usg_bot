@@ -1,7 +1,9 @@
 package command
 
+import "usg_bot/entity"
+
 // Responder represents Commnad interface
 type Responder interface {
-	Resolve(string) bool
-	Response(string) string
+	Resolve(chat string) bool
+	Respond(from *entity.User, msg *entity.Message) string
 }
